@@ -96,7 +96,7 @@ public class Gestion extends JDialog implements ActionListener {
         ventana.getTabbedPane().setSelectedIndex(2);
         ventana.getTextNombreT().setEnabled(true);
         ventana.getTextCodigoT().setEnabled(true);
-        ventana.getDateChooserFechaT().setEnabled(true);
+        ventana.getTextFechaT().setEnabled(true);
         ventana.getBtnVolverT().setEnabled(true);
         ventana.getBtnClasificarJ().setEnabled(true);
         ventana.getBtnAñadirJ().setEnabled(true);
@@ -127,8 +127,8 @@ public class Gestion extends JDialog implements ActionListener {
         ventana.getTabbedPane().setSelectedIndex(0);
         ventana.getTextNombreJ().setEnabled(true);
         ventana.getTextNicknameJ().setEnabled(true);
-        ventana.getDateChooserFechaNac().setEnabled(true);
-        ventana.getTextProvinciaJ().setEnabled(true);
+        ventana.getTextFachNacJ().setEnabled(true);
+        ventana.getComboBoxProvincia().setEnabled(true);
         ventana.getBtnAltaJ().setEnabled(true);
         ventana.getBtnVolverJ().setEnabled(true);
         ventana.setVisible(true);
@@ -143,4 +143,3 @@ public class Gestion extends JDialog implements ActionListener {
         ventana.setVisible(true);
     }
 }
-

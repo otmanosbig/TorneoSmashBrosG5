@@ -1,13 +1,17 @@
 package vista;
 
 import javax.swing.*;
+
+import controlador.DaoImplementacionMySql;
+
+
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import vista.Gestion;
-import com.toedter.calendar.JDateChooser;
-
-
+import java.util.List;
+import java.util.ArrayList;
 
 public class VentanaPestañas extends JDialog implements ActionListener {
     /**
@@ -16,7 +20,7 @@ public class VentanaPestañas extends JDialog implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private JTextField textNombreJ;
     private JTextField textNicknameJ;
-    private JTextField textProvinciaJ;
+    private JTextField textFachNacJ;
     private JTabbedPane tabbedPane;
     private JButton btnAltaJ;
     private JButton btnVolverT;
@@ -29,21 +33,19 @@ public class VentanaPestañas extends JDialog implements ActionListener {
     private JButton btnAñadirJ;
     private JButton btnClasificarJ;
     private JButton btnSeleccionar;
-    private JComboBox comboBoxJugadores;
+    private JComboBox<String> comboBoxJugadores;
+    private JComboBox<String> comboBoxProvincia;
     private JTextField textNombreA;
     private JTextField textCodA;
     private JTextField textNombreT;
+    private JTextField textFechaT;
     private JTextField textCodigoT;
-    private JDateChooser dateChooserFechaNac;
-    private JDateChooser dateChooserFechaT;
 
-    // Constructor que inicializa la ventana correctamente
     public VentanaPestañas(JDialog parent) {
         super(parent, "SmashBros Gestionar", true);
         setSize(674, 511);
         setLocationRelativeTo(parent);
 
-        // Panel 1 (Gestión de Jugador) - NO SE TOCA, SE MANTIENE COMO ESTABA
         tabbedPane = new JTabbedPane();
         tabbedPane.setBounds(0, 0, 674, 511);
         getContentPane().setLayout(null);
@@ -51,8 +53,7 @@ public class VentanaPestañas extends JDialog implements ActionListener {
         
         JPanel panel1 = new JPanel();
         panel1.setLayout(null);
-        
-     // Agregar componentes a panel1 (como botones, etiquetas, etc.)
+
         JLabel label1 = new JLabel("Panel de Jugadores");
         label1.setBounds(10, 10, 200, 25);
         panel1.add(label1);
@@ -89,13 +90,14 @@ public class VentanaPestañas extends JDialog implements ActionListener {
         textNicknameJ.setBounds(268, 88, 173, 19);
         panel1.add(textNicknameJ);
 
-        textProvinciaJ = new JTextField();
-        textProvinciaJ.setEnabled(false);
-        textProvinciaJ.setBounds(268, 168, 173, 19);
-        panel1.add(textProvinciaJ);
+        textFachNacJ = new JTextField();
+        textFachNacJ.setEnabled(false);
+        textFachNacJ.setBounds(268, 127, 173, 19);
+        panel1.add(textFachNacJ);
 
         btnAltaJ = new JButton("Alta");
         btnAltaJ.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnAltaJ.addActionListener(this);
         btnAltaJ.setEnabled(false);
         btnAltaJ.setBounds(461, 52, 150, 21);
         panel1.add(btnAltaJ);
@@ -103,6 +105,7 @@ public class VentanaPestañas extends JDialog implements ActionListener {
         btnBajaJ = new JButton("Baja");
         btnBajaJ.setEnabled(false);
         btnBajaJ.setFont(new Font("Tahoma", Font.BOLD, 14));
+        btnBajaJ.addActionListener(this);
         btnBajaJ.setBounds(461, 88, 150, 21);
         panel1.add(btnBajaJ);
 
@@ -124,7 +127,7 @@ public class VentanaPestañas extends JDialog implements ActionListener {
         lblSeleccionar.setBounds(153, 213, 122, 13);
         panel1.add(lblSeleccionar);
         
-        comboBoxJugadores = new JComboBox();
+        comboBoxJugadores = new JComboBox<String>();
         comboBoxJugadores.setEnabled(false);
         comboBoxJugadores.setBounds(269, 211, 173, 21);
         panel1.add(comboBoxJugadores);
@@ -135,18 +138,31 @@ public class VentanaPestañas extends JDialog implements ActionListener {
         btnSeleccionar.setBounds(461, 167, 150, 21);
         panel1.add(btnSeleccionar);
         
-        JDateChooser dateChooserFechaNac = new JDateChooser();
-        dateChooserFechaNac.setBounds(268, 122, 174, 25);
-        panel1.add(dateChooserFechaNac);
+        comboBoxProvincia = new JComboBox<String>();
+        comboBoxProvincia.setEnabled(false);
+        comboBoxProvincia.setBounds(268, 167, 174, 21);
+        panel1.add(comboBoxProvincia);
         
-        // Panel 2 (Gestión de Árbitros) - SE MANTIENE IGUAL
+        DaoImplementacionMySql dao = new DaoImplementacionMySql();
+        try {
+            List<String> nicknames = dao.obtenerNicknames();
+
+            for (String nickname : nicknames) {
+                comboBoxJugadores.addItem(nickname);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al cargar los jugadores: " + e.getMessage());
+        }
+        
+        inicializarComboBoxProvincias();
+        
         JPanel panel2 = new JPanel();
         panel2.setLayout(null);
         tabbedPane.addTab("Gestionar Arbitro", panel2);
-        
-        // Crear un JLabel para el título del panel de Árbitros
+
         JLabel label2 = new JLabel("Panel de Arbitros");
-        label2.setBounds(10, 10, 200, 25); // Define las coordenadas para el título
+        label2.setBounds(10, 10, 200, 25);
         panel2.add(label2);
 
         JLabel lblNewLabel_1 = new JLabel("Nombre:");
@@ -188,13 +204,12 @@ public class VentanaPestañas extends JDialog implements ActionListener {
         textCodA.setBounds(214, 136, 173, 19);
         panel2.add(textCodA);
 
-        // Panel 3 (Gestión de Torneos) - NO SE TOCA
         JPanel panel3 = new JPanel();
         panel3.setLayout(null);
         tabbedPane.addTab("Gestionar Torneos", panel3);
         
         JLabel label3 = new JLabel("Panel de Torneos");
-        label3.setBounds(10, 10, 200, 25); // Define las coordenadas para el título
+        label3.setBounds(10, 10, 200, 25);
         panel3.add(label3);
 
         JLabel lblNewLabel_1_2 = new JLabel("Nombre:");
@@ -212,6 +227,11 @@ public class VentanaPestañas extends JDialog implements ActionListener {
         textNombreT.setBounds(248, 92, 173, 19);
         panel3.add(textNombreT);
         
+        textFechaT = new JTextField();
+        textFechaT.setEnabled(false);
+        textFechaT.setBounds(248, 140, 173, 19);
+        panel3.add(textFechaT);
+        
         btnAltaT = new JButton("Alta");
         btnAltaT.setFont(new Font("Tahoma", Font.BOLD, 14));
         btnAltaT.setEnabled(false);
@@ -221,13 +241,13 @@ public class VentanaPestañas extends JDialog implements ActionListener {
         btnAñadirJ = new JButton("AñadirJ");
         btnAñadirJ.setFont(new Font("Tahoma", Font.BOLD, 14));
         btnAñadirJ.setEnabled(false);
-        btnAñadirJ.setBounds(49, 319, 161, 21);
+        btnAñadirJ.setBounds(49, 319, 150, 21);
         panel3.add(btnAñadirJ);
         
         btnClasificarJ = new JButton("ClasificarJ");
         btnClasificarJ.setFont(new Font("Tahoma", Font.BOLD, 14));
         btnClasificarJ.setEnabled(false);
-        btnClasificarJ.setBounds(248, 319, 161, 21);
+        btnClasificarJ.setBounds(248, 321, 150, 21);
         panel3.add(btnClasificarJ);
         
         JLabel lblNewLabel_1_2_1 = new JLabel("Codigo:");
@@ -246,31 +266,19 @@ public class VentanaPestañas extends JDialog implements ActionListener {
         btnVolverT.setFont(new Font("Tahoma", Font.BOLD, 16));
         btnVolverT.setBounds(248, 244, 85, 21);
         panel3.add(btnVolverT);
-        
-        JDateChooser dateChooserFechaT = new JDateChooser();
-        dateChooserFechaT.setBounds(248, 132, 174, 25);
-        panel3.add(dateChooserFechaT);
 
     }
-
     public JTabbedPane getTabbedPane() {
         return tabbedPane;
     }
-
     public JTextField getTextNombreJ() {
         return textNombreJ;
     }
-
     public JTextField getTextNicknameJ() {
         return textNicknameJ;
     }
-
-    public JDateChooser getDateChooserFechaNac() {
-        return dateChooserFechaNac;
-    }
-
-    public JTextField getTextProvinciaJ() {
-        return textProvinciaJ;
+    public JTextField getTextFachNacJ() {
+        return textFachNacJ;
     }
     public JButton getBtnAltaJ() {
         return btnAltaJ;
@@ -314,11 +322,11 @@ public class VentanaPestañas extends JDialog implements ActionListener {
 	public void setTextNombreT(JTextField textNombreT) {
 		this.textNombreT = textNombreT;
 	}
-	public JDateChooser getDateChooserFechaT() {
-		return dateChooserFechaT;
+	public JTextField getTextFechaT() {
+		return textFechaT;
 	}
-	public void setDateChooserFechaT(JTextField datechooserFechaT) {
-		this.dateChooserFechaT = dateChooserFechaT;
+	public void setTextFechaT(JTextField textFechaT) {
+		this.textFechaT = textFechaT;
 	}
 	public JTextField getTextCodigoT() {
 		return textCodigoT;
@@ -350,11 +358,17 @@ public class VentanaPestañas extends JDialog implements ActionListener {
 	public void setBtnSeleccionar(JButton btnSeleccionar) {
 		this.btnSeleccionar = btnSeleccionar;
 	}
-	public JComboBox getComboBoxJugadores() {
+	public JComboBox<String> getComboBoxJugadores() {
 		return comboBoxJugadores;
 	}
-	public void setComboBoxJugadores(JComboBox comboBoxJugadores) {
+	public void setComboBoxJugadores(JComboBox<String> comboBoxJugadores) {
 		this.comboBoxJugadores = comboBoxJugadores;
+	}
+	public JComboBox<String> getComboBoxProvincia() {
+		return comboBoxProvincia;
+	}
+	public void setComboBoxProvincia(JComboBox<String> comboBoxProvincia) {
+		this.comboBoxProvincia = comboBoxProvincia;
 	}
 
 	@Override
@@ -365,14 +379,61 @@ public class VentanaPestañas extends JDialog implements ActionListener {
 			volverMenuA();
 		} else if (e.getSource().equals(btnVolverT)) {
 			volverMenuT();
+		} else if (e.getSource().equals(btnAltaJ)) {
+			DarDeAltaJugador();
+		} else if (e.getSource().equals(btnBajaJ)) {
+			DarDeBajaJugador();
 		}
-		
+	}
+
+	private void DarDeBajaJugador() {
+	    String nicknameSeleccionado = (String) comboBoxJugadores.getSelectedItem();
+	    
+	    if (nicknameSeleccionado == null) {
+	        JOptionPane.showMessageDialog(this, "Por favor, seleccione un jugador para dar de baja.");
+	        return;
+	    }
+	    
+	    DaoImplementacionMySql dao = new DaoImplementacionMySql();
+	    
+	    try {
+	        dao.eliminarJugador(nicknameSeleccionado);
+	        JOptionPane.showMessageDialog(this, "Jugador dado de baja correctamente.");
+	        
+	        comboBoxJugadores.removeItem(nicknameSeleccionado);
+	    } catch (SQLException e) {
+	        JOptionPane.showMessageDialog(this, "Error al dar de baja el jugador: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+	}
+	
+	private void DarDeAltaJugador() {
+	    String nombre = textNombreJ.getText();
+	    String nickname = textNicknameJ.getText();
+	    String fechaNacimiento = textFachNacJ.getText();
+	    String provinciaSeleccionada = (String) comboBoxProvincia.getSelectedItem();
+	    
+	    if (nombre.isEmpty() || nickname.isEmpty() || fechaNacimiento.isEmpty() || provinciaSeleccionada.isEmpty()) {
+	        JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos.");
+	        return;
+	    }
+	    
+	    DaoImplementacionMySql dao = new DaoImplementacionMySql();
+	    
+	    try {
+	        int idP = dao.obtenerIdProvincia(provinciaSeleccionada);
+	        dao.insertarJugador(nombre, nickname, fechaNacimiento, idP);
+	        JOptionPane.showMessageDialog(this, "Jugador dado de alta correctamente.");
+	    } catch (SQLException e) {
+	        JOptionPane.showMessageDialog(this, "Error al insertar el jugador: " + e.getMessage());
+	        e.printStackTrace();
+	    }
 	}
 
 	private void volverMenuT() {
 		this.getTextNombreA().setEnabled(false);
         this.getTextCodigoT().setEnabled(false);
-        this.getDateChooserFechaNac().setEnabled(false);
+        this.getTextFechaT().setEnabled(false);
         this.getBtnVolverT().setEnabled(false);
         this.getBtnClasificarJ().setEnabled(false);
         this.getBtnAñadirJ().setEnabled(false);
@@ -390,16 +451,27 @@ public class VentanaPestañas extends JDialog implements ActionListener {
     }
 
 	private void volverMenuJ() {
-	    // Deshabilitar todos los componentes de la ventana actual (VentanaPestañas)
 	    this.getTextNombreJ().setEnabled(false);
 	    this.getTextNicknameJ().setEnabled(false);
-	    this.getDateChooserFechaNac().setEnabled(false);
-	    this.getTextProvinciaJ().setEnabled(false);
+	    this.getTextFachNacJ().setEnabled(false);
+	    this.getComboBoxProvincia().setEnabled(false);
 	    this.getBtnAltaJ().setEnabled(false);
 	    this.getBtnSeleccionar().setEnabled(false);
 	    this.getComboBoxJugadores().setEnabled(false);
 	    this.getBtnVolverJ().setEnabled(false);
 	    
 	    this.setVisible(false); 
+	}
+	private void inicializarComboBoxProvincias() {
+	    DaoImplementacionMySql dao = new DaoImplementacionMySql();
+	    try {
+	        List<String> provincias = dao.obtenerProvincias();
+	        for (String provincia : provincias) {
+	            comboBoxProvincia.addItem(provincia);
+	        }
+	    } catch (SQLException e) {
+	        JOptionPane.showMessageDialog(this, "Error al cargar provincias: " + e.getMessage());
+	        e.printStackTrace();
+	    }
 	}
 }

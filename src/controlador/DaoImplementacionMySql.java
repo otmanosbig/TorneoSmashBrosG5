@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import excepciones.LoginException;
@@ -21,7 +23,13 @@ public class DaoImplementacionMySql implements Dao {
 	
 	
 	final String LOGGIN = "SELECT * FROM usuario WHERE usu = ? AND contrasena = ?";
-	final String REGISTER_USER = "INSERT INTO usuario (usu, contrasena, nombre, admin) VALUES (?, ?, ?, ?)";
+	final String REGISTER_USER = "INSERT INTO usuario (usu, contrasena) VALUES (?, ?)";
+	final String GET_NICKNAMES = "SELECT nickname FROM jugador";
+	final String GET_PROVINCIAS = "SELECT nombreP FROM provincia";
+	final String GET_IDP = "SELECT idP FROM provincia WHERE nombreP = ?";
+	final String INSERT_JUGADOR = "INSERT INTO jugador (nombre, nickname, fechaNac, idP) VALUES (?, ?, ?, ?)";
+	final String DELETE_JUGADOR = "DELETE FROM jugador WHERE nickname = ?";
+	final String CREATE_USER = "INSERT INTO usuario (usu, contrasena) VALUES (?, ?)";
 
 	public DaoImplementacionMySql() {
 		this.configFile = ResourceBundle.getBundle("modelo.configClase");
@@ -110,40 +118,36 @@ public class DaoImplementacionMySql implements Dao {
 	}
 	
 	public void registrar(Usuario usuario) throws SQLException {
-        // Consulta SQL para insertar un nuevo usuario en la base de datos
-        openConnection();
-        
-        
-        if (con == null) {
-            throw new SQLException("No se pudo establecer conexión con la base de datos");
-        }
-        
-        try (PreparedStatement stmt = con.prepareStatement(REGISTER_USER)) {
-            // Asignamos los valores del usuario al PreparedStatement
-            stmt.setString(1, usuario.getUsu());         // Nombre de usuario
-            stmt.setString(2, usuario.getContrasena());  // Contraseña
-            stmt.setString(3, usuario.getNombre());      // Nombre
-            stmt.setBoolean(4, false);                   // Admin (default to false)
+		openConnection();
 
-            // Ejecutamos la consulta para insertar el usuario
-            int filasInsertadas = stmt.executeUpdate();
+		    if (con == null) {
+		        throw new SQLException("No se pudo establecer conexión con la base de datos");
+		    }
+		    
+			System.out.println("Ejecutando consulta SQL: " + CREATE_USER);
+		    try (PreparedStatement stmt = con.prepareStatement(CREATE_USER)) {
+		        stmt.setString(1, usuario.getUsu());
+		        stmt.setString(2, usuario.getContrasena());
 
-            if (filasInsertadas > 0) {
-                System.out.println("Usuario registrado exitosamente.");
-            } else {
-                throw new SQLException("No se pudo registrar el usuario.");
-            }
-        } catch (SQLException e) {
-            System.out.println("SQL Error in registrar: " + e.getMessage());
-            throw new SQLException("Error al registrar usuario: " + e.getMessage());
-        } finally {
-            closeConnection();
-        }
-    }
-	
+		        int filasInsertadas = stmt.executeUpdate();
+		        
+		        if (filasInsertadas > 0) {
+		            System.out.println("Usuario insertado correctamente.");
+		        } else {
+		            throw new SQLException("No se pudo registrar el usuario.");
+		        }
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		        throw new SQLException("Error al registrar usuario: " + e.getMessage());
+		    } finally {
+		        closeConnection();
+		    }
+		}
+
+
 	public boolean validarUsuario(String usuario, String contrasena) throws SQLException {
         ResultSet rs = null;
-        boolean existe = false; // Variable para saber si el usuario existe
+        boolean existe = false;
 
         openConnection();
 
@@ -159,7 +163,7 @@ public class DaoImplementacionMySql implements Dao {
             rs = stmt.executeQuery();
 
             if (rs.next()) {
-                existe = true; // El usuario existe en la BD
+                existe = true;
             }
         } catch (SQLException e) {
             System.out.println("SQL Error in validarUsuario: " + e.getMessage());
@@ -170,4 +174,144 @@ public class DaoImplementacionMySql implements Dao {
         }
         return existe;
     }
+	
+	public List<String> obtenerNicknames() throws SQLException {
+	    List<String> nicknames = new ArrayList<>();
+	    ResultSet rs = null;
+
+	    openConnection();
+
+	    if (con == null) {
+	        throw new SQLException("No se pudo establecer conexión con la base de datos");
+	    }
+
+	    try {
+	        System.out.println("Ejecutando consulta SQL: " + GET_NICKNAMES);
+	        stmt = con.prepareStatement(GET_NICKNAMES);
+	        rs = stmt.executeQuery();
+
+	        while (rs.next()) {
+	            nicknames.add(rs.getString("nickname"));
+	        }
+	    } catch (SQLException e) {
+	        System.out.println("Error en la consulta SQL: " + e.getMessage());
+	        throw new SQLException("Error al obtener los nicknames: " + e.getMessage());
+	    } finally {
+	        if (rs != null) rs.close();
+	        closeConnection();
+	    }
+	    return nicknames;
+	}
+	public List<String> obtenerProvincias() throws SQLException {
+	    List<String> provincias = new ArrayList<>();
+	    ResultSet rs = null;
+
+	    openConnection();
+
+	    if (con == null) {
+	        throw new SQLException("No se pudo establecer conexión con la base de datos");
+	    }
+
+	    try {
+	    	System.out.println("Ejecutando consulta SQL: " + GET_PROVINCIAS);
+	        stmt = con.prepareStatement(GET_PROVINCIAS);
+	        rs = stmt.executeQuery();
+
+	        while (rs.next()) {
+	            provincias.add(rs.getString("nombreP"));
+	        }
+	    } catch (SQLException e) {
+	        System.out.println("Error en la consulta SQL: " + e.getMessage());
+	        throw new SQLException("Error al obtener las provincias: " + e.getMessage());
+	    } finally {
+	        if (rs != null) rs.close();
+	        closeConnection();
+	    }
+	    return provincias;
+	}
+	
+	public void insertarJugador(String nombre, String nickname, String fechaNacimiento, int idP) throws SQLException {
+	    openConnection();
+	    
+	    if (con == null) {
+	        throw new SQLException("No se pudo establecer conexión con la base de datos");
+	    }
+	    
+		System.out.println("Ejecutando consulta SQL: " + INSERT_JUGADOR);
+	    try (PreparedStatement stmt = con.prepareStatement(INSERT_JUGADOR)) {
+	        stmt.setString(1, nombre);
+	        stmt.setString(2, nickname);
+	        stmt.setString(3, fechaNacimiento);
+	        stmt.setInt(4, idP);
+
+	        int filasInsertadas = stmt.executeUpdate();
+
+	        if (filasInsertadas > 0) {
+	            System.out.println("Jugador insertado correctamente.");
+	        } else {
+	            throw new SQLException("No se pudo insertar el jugador.");
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        throw new SQLException("Error al insertar jugador: " + e.getMessage());
+	    } finally {
+	        closeConnection();
+	    }
+	}
+	
+	public int obtenerIdProvincia(String nombreProvincia) throws SQLException {
+	    int idP = -1;
+	    ResultSet rs = null;
+
+	    openConnection();
+
+	    if (con == null) {
+	        throw new SQLException("No se pudo establecer conexión con la base de datos");
+	    }
+
+	    try {
+	    	System.out.println("Ejecutando consulta SQL: " + GET_IDP);
+	        stmt = con.prepareStatement(GET_IDP);
+	        stmt.setString(1, nombreProvincia);
+	        rs = stmt.executeQuery();
+
+	        if (rs.next()) {
+	            idP = rs.getInt("idP");
+	        } else {
+	            throw new SQLException("Provincia no encontrada.");
+	        }
+	    } catch (SQLException e) {
+	        System.out.println("Error en la consulta SQL: " + e.getMessage());
+	        throw new SQLException("Error al obtener el idP de la provincia: " + e.getMessage());
+	    } finally {
+	        if (rs != null) rs.close();
+	        closeConnection();
+	    }
+	    return idP;
+	}
+	
+	public void eliminarJugador(String nickname) throws SQLException {
+	    openConnection();
+
+	    if (con == null) {
+	        throw new SQLException("No se pudo establecer conexión con la base de datos");
+	    }
+
+		System.out.println("Ejecutando consulta SQL: " + DELETE_JUGADOR);
+	    try (PreparedStatement stmt = con.prepareStatement(DELETE_JUGADOR)) {
+	        stmt.setString(1, nickname);
+	        int filasEliminadas = stmt.executeUpdate();
+
+	        if (filasEliminadas > 0) {
+	            System.out.println("Jugador eliminado correctamente.");
+	        } else {
+	            throw new SQLException("No se pudo eliminar el jugador. Puede que no exista.");
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        throw new SQLException("Error al eliminar jugador: " + e.getMessage());
+	    } finally {
+	        closeConnection();
+	    }
+	}
 }

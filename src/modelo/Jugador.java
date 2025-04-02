@@ -7,7 +7,7 @@ public class Jugador {
 	private int puntos = 0;
 	private String nickname;
 	private String nombre;
-	private String nombreP;
+	private String provincia;
 	private LocalDate fechaNac;
 	
 
@@ -31,16 +31,22 @@ public class Jugador {
 		this.nombre = nombre;
 	}
 	public String getNombreP() {
-		return nombreP;
+		return provincia;
 	}
-	public void setNombreP(String nombreP) {
-		this.nombreP = nombreP;
+	public void setNombreP(String provincia) {
+		this.provincia = provincia;
 	}
 	public LocalDate getFechaNac() {
 		return fechaNac;
 	}
 	public void setFechaNac(LocalDate fechaNac) {
 		this.fechaNac = fechaNac;
+	}
+	
+	@Override
+	public String toString() {
+		return "Jugador [puntos=" + puntos + ", nickname=" + nickname + ", nombre=" + nombre + ", provincia=" + provincia
+				+ ", fechaNac=" + fechaNac + "]";
 	}
 	
 }

@@ -61,38 +61,30 @@ public class Login extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
     	if (e.getSource().equals(btnlogin)) {
-            // Obtener el usuario y la contraseña desde los campos de texto
-            String usuario = textUsuario.getText().trim();  // .trim() para eliminar espacios al principio y al final
-            String contrasena = new String(passwordField.getPassword());  // .trim() para eliminar espacios
+            String usuario = textUsuario.getText().trim();
+            String contrasena = new String(passwordField.getPassword());
 
-            // Verificar si los campos están vacíos
             if (usuario.isEmpty() || contrasena.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Por favor ingrese usuario y contraseña.");
-                return;  // Salir del método sin proceder más
+                return;
             }
 
-            // Crear una instancia de DaoImplementacionMySql
             DaoImplementacionMySql dao = new DaoImplementacionMySql();
             
             Gestion gestion = new Gestion(this);
 
 
             try {
-                // Validar usuario llamando a validarUsuario
                 if (dao.validarUsuario(usuario, contrasena)) {
-                    // Si el usuario existe, ocultamos la ventana de login y mostramos la siguiente ventana
-                    this.setVisible(false);  // Ocultar la ventana de login
-                    gestion.setVisible(true);  // Mostrar la siguiente ventana
+                    this.setVisible(false);
+                    gestion.setVisible(true);
                 } else {
-                    // Si el usuario o la contraseña son incorrectos, mostrar un mensaje de error
                     JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos.");
                 }
             } catch (SQLException ex) {
-                // En caso de error en la base de datos
                 JOptionPane.showMessageDialog(this, "Error de conexión: " + ex.getMessage());
             }
         } else if (e.getSource().equals(btnRegistrar)) {
-            // Si se presiona el botón de registrar, abrir la ventana de registro
             Registrar registrar = new Registrar();
             this.setVisible(false);
             registrar.setVisible(true);
