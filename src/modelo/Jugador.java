@@ -3,14 +3,12 @@ package modelo;
 import java.time.LocalDate;
 
 public class Jugador {
-
 	private int puntos = 0;
 	private String nickname;
 	private String nombre;
-	private String provincia;
+	private String nombreP;
 	private LocalDate fechaNac;
 	
-
 	// getters and setters
 	public int getPuntos() {
 		return puntos;
@@ -31,22 +29,16 @@ public class Jugador {
 		this.nombre = nombre;
 	}
 	public String getNombreP() {
-		return provincia;
+		return nombreP;
 	}
-	public void setNombreP(String provincia) {
-		this.provincia = provincia;
+	public void setNombreP(String nombreP) {
+		this.nombreP = nombreP;
 	}
 	public LocalDate getFechaNac() {
 		return fechaNac;
 	}
 	public void setFechaNac(LocalDate fechaNac) {
 		this.fechaNac = fechaNac;
-	}
-	
-	@Override
-	public String toString() {
-		return "Jugador [puntos=" + puntos + ", nickname=" + nickname + ", nombre=" + nombre + ", provincia=" + provincia
-				+ ", fechaNac=" + fechaNac + "]";
 	}
 	
 }

@@ -65,13 +65,13 @@ class JuegaTest {
 	// Tests for Puntos getter and setter
 	@Test
 	void testGetPuntos() {
-		assertEquals(0, juega.getPuntos());
+		assertEquals(0, juega.getPuntos_obtenidos());
 	}
 	
 	@Test
 	void testSetPuntos() {
 		int puntos = 100;
-		juega.setPuntos(puntos);
-		assertEquals(puntos, juega.getPuntos());
+		juega.setPuntos_obtenidos(puntos);
+		assertEquals(puntos, juega.getPuntos_obtenidos());
 	}
 }

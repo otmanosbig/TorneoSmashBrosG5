@@ -2,12 +2,12 @@ package excepciones;
 
 import javax.swing.JOptionPane;
 
-public class LoginException extends Exception {
-
+public class GlobalException extends Exception {
+	
 	private static final long serialVersionUID = 1L;
 	private String mensaje;
 
-	public LoginException(String mensaje) {
+	public GlobalException(String mensaje) {
 		this.mensaje = mensaje;
 	}
 	
@@ -16,3 +16,4 @@ public class LoginException extends Exception {
 	}
 	
 }
+

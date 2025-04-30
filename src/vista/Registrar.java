@@ -29,39 +29,52 @@ public class Registrar extends JDialog implements ActionListener {
         contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
         getContentPane().add(contentPanel, BorderLayout.CENTER);
         contentPanel.setLayout(null);
+        contentPanel.setBackground(new Color(30, 0, 50));
 
         btnVolverR = new JButton("Volver");
+        btnVolverR.setForeground(Color.RED);
+        btnVolverR.setBackground(Color.BLACK);
         btnVolverR.setFont(new Font("Tahoma", Font.BOLD, 16));
-        btnVolverR.setBounds(47, 362, 95, 21);
+        btnVolverR.setBounds(47, 362, 109, 21);
         btnVolverR.addActionListener(this);
         contentPanel.add(btnVolverR);
 
         btnRegistrarR = new JButton("Registrar");
+        btnRegistrarR.setForeground(Color.BLUE);
+        btnRegistrarR.setBackground(Color.BLACK);
         btnRegistrarR.setEnabled(false);
         btnRegistrarR.setFont(new Font("Tahoma", Font.BOLD, 16));
-        btnRegistrarR.setBounds(481, 364, 118, 21);
+        btnRegistrarR.setBounds(471, 364, 128, 21);
         btnRegistrarR.addActionListener(this);
         contentPanel.add(btnRegistrarR);
 
         passwordFieldContAdmin = new JPasswordField();
+        passwordFieldContAdmin.setForeground(new Color(255, 255, 255));
+        passwordFieldContAdmin.setBackground(new Color(64, 0, 64));
         passwordFieldContAdmin.setBounds(175, 274, 118, 19);
         contentPanel.add(passwordFieldContAdmin);
 
         JLabel lblNewLabel_1_2_1 = new JLabel("Contraseña:");
+        lblNewLabel_1_2_1.setForeground(Color.WHITE);
         lblNewLabel_1_2_1.setFont(new Font("Tahoma", Font.BOLD, 16));
         lblNewLabel_1_2_1.setBounds(175, 221, 109, 20);
         contentPanel.add(lblNewLabel_1_2_1);
 
         passwordField_1 = new JPasswordField();
+        passwordField_1.setBackground(new Color(64, 0, 64));
+        passwordField_1.setForeground(Color.WHITE);
         passwordField_1.setBounds(277, 224, 204, 19);
         contentPanel.add(passwordField_1);
 
         JLabel lblUser = new JLabel("Usuario:");
+        lblUser.setForeground(Color.WHITE);
         lblUser.setFont(new Font("Tahoma", Font.BOLD, 16));
         lblUser.setBounds(198, 171, 78, 43);
         contentPanel.add(lblUser);
 
         textField_1 = new JTextField();
+        textField_1.setBackground(new Color(64, 0, 64));
+        textField_1.setForeground(Color.WHITE);
         textField_1.setFont(new Font("Tahoma", Font.PLAIN, 14));
         textField_1.setColumns(10);
         textField_1.setBounds(278, 183, 203, 19);
